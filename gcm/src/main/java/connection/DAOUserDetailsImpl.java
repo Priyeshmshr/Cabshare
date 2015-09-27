@@ -1,4 +1,7 @@
-package com.cabshare.connection;
+package connection;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,9 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 public class DAOUserDetailsImpl implements DAOUserDetailsInterface {
 

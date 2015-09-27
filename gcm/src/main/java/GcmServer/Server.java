@@ -1,24 +1,8 @@
 package GcmServer;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.net.ssl.SSLSocketFactory;
-
-import org.jivesoftware.smack.ConnectionConfiguration;
+import com.sun.net.httpserver.HttpServer;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketInterceptor;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.Message;
@@ -31,7 +15,14 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.xmlpull.v1.XmlPullParser;
 
-import com.sun.net.httpserver.HttpServer;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * Sample Smack implementation of a client for GCM Cloud Connection Server.
  *
@@ -39,77 +30,22 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class Server{
 
-  Logger logger = Logger.getLogger("SmackCcsClient");
-
   public static final String GCM_SERVER = "gcm.googleapis.com";
   public static final int GCM_PORT = 5235;
-
   public static final String GCM_ELEMENT_NAME = "gcm";
   public static final String GCM_NAMESPACE = "google:mobile:data";
-
   static Random random = new Random();
+  static DbUpdate db;
+  private static HttpServer httpServer;
+  Logger logger = Logger.getLogger("SmackCcsClient");
   XMPPConnection connection;
   ConnectionConfiguration config;
-  private static HttpServer httpServer;
-  static DbUpdate db ;
-  /**
-   * XMPP Packet Extension for GCM Cloud Connection Server.
-   */
-  class GcmPacketExtension extends DefaultPacketExtension {
-    String json;
-
-    public GcmPacketExtension(String json) {
-      super(GCM_ELEMENT_NAME, GCM_NAMESPACE);
-      this.json = json;
-    }
-
-    public String getJson() {
-      return json;
-    }
-    @Override
-    public String toXML() {
-      return String.format("<%s xmlns=\"%s\">%s</%s>", GCM_ELEMENT_NAME,
-          GCM_NAMESPACE, json, GCM_ELEMENT_NAME);
-    }
-
-    public Packet toPacket() {
-      return new Message() {
-        // Must override toXML() because it includes a <body>
-        @Override
-        public String toXML() {
-
-          StringBuilder buf = new StringBuilder();
-          buf.append("<message");
-          if (getXmlns() != null) {
-            buf.append(" xmlns=\"").append(getXmlns()).append("\"");
-          }
-          if (getLanguage() != null) {
-            buf.append(" xml:lang=\"").append(getLanguage()).append("\"");
-          }
-          if (getPacketID() != null) {
-            buf.append(" id=\"").append(getPacketID()).append("\"");
-          }
-          if (getTo() != null) {
-            buf.append(" to=\"").append(StringUtils.escapeForXML(getTo())).append("\"");
-          }
-          if (getFrom() != null) {
-            buf.append(" from=\"").append(StringUtils.escapeForXML(getFrom())).append("\"");
-          }
-          buf.append(">");
-          buf.append(GcmPacketExtension.this.toXML());
-          buf.append("</message>");
-          return buf.toString();
-        }
-      };
-    }
-  }
-
   public Server() {
     // Add GcmPacketExtension
     ProviderManager.getInstance().addExtensionProvider(GCM_ELEMENT_NAME,
         GCM_NAMESPACE, new PacketExtensionProvider() {
 
-      @Override 
+              @Override
       public PacketExtension parseExtension(XmlPullParser parser)
           throws Exception {
         String json = parser.nextText();
@@ -117,6 +53,112 @@ public class Server{
         return packet;
       }
     });
+  }
+
+  /**
+   * Creates a JSON encoded GCM message.
+   *
+   * @param to RegistrationId of the target device (Required).
+   * @param messageId Unique messageId for which CCS will send an "ack/nack" (Required).
+   * @param payload Message content intended for the application. (Optional).
+   * @param collapseKey GCM collapse_key parameter (Optional).
+   * @param timeToLive GCM time_to_live parameter (Optional).
+   * @param delayWhileIdle GCM delay_while_idle parameter (Optional).
+   * @return JSON encoded GCM message.
+   */
+  public static String createJsonMessage(String to, String messageId, Map<String, String> payload,
+                                         String collapseKey, Long timeToLive, Boolean delayWhileIdle) {
+    Map<String, Object> message = new HashMap<String, Object>();
+    message.put("to", to);
+    if (collapseKey != null) {
+      message.put("collapse_key", collapseKey);
+    }
+    if (timeToLive != null) {
+      message.put("time_to_live", timeToLive);
+    }
+    if (delayWhileIdle != null && delayWhileIdle) {
+      message.put("delay_while_idle", true);
+    }
+    message.put("message_id", messageId);
+    message.put("data", payload);
+    return JSONValue.toJSONString(message);
+  }
+
+  /**
+   * Creates a JSON encoded ACK message for an upstream message received from an application.
+   *
+   * @param to        RegistrationId of the device who sent the upstream message.
+   * @param messageId messageId of the upstream message to be acknowledged to CCS.
+   * @return JSON encoded ack.
+   */
+  public static String createJsonAck(String to, String messageId) {
+    Map<String, Object> message = new HashMap<String, Object>();
+    message.put("message_type", "ack");
+    message.put("to", to);
+    message.put("message_id", messageId);
+    return JSONValue.toJSONString(message);
+  }
+
+  public static void main(String[] args) {
+    final String userName = "1054444576671" + "@gcm.googleapis.com";
+    final String password = "AIzaSyCgNKkvTFW5FzV5XVf5KYNtXls39hGtLiM";
+
+    /*//code to connect to port 8080
+    String repo = System.getenv("OPENSHIFT_REPO_DIR");
+    if(repo == null) {
+        repo = ".";
+    }
+    String ip = System.getenv("OPENSHIFT_DIY_IP");
+    if(ip == null) {
+        ip = "127.9.96.129";
+    }
+    String ports = System.getenv("OPENSHIFT_DIY_PORT");
+    if(ports == null) {
+        ports = "8080";
+    }
+    int port = Integer.decode(ports);
+    InetAddress isa;
+	try {
+		isa = InetAddress.getByName(ip);
+		httpServer = HttpServer.create(new InetSocketAddress(isa, port), 10);
+	} catch (UnknownHostException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    httpServer.setExecutor(null);
+    httpServer.start();
+    //code over*/
+
+    Server ccsClient = new Server();
+
+    try {
+      ccsClient.connect(userName, password);
+      db = new DbUpdate();
+    } catch (XMPPException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    //Send a sample hello downstream message to a device.
+    String toRegId = "RegistrationIdOfTheTargetDevice";
+    String messageId = ccsClient.getRandomMessageId();
+    Map<String, String> payload = new HashMap<String, String>();
+    payload.put("Hello", "World");
+    payload.put("CCS", "Dummy Message");
+    payload.put("EmbeddedMessageId", messageId);
+    String collapseKey = "sample";
+    Long timeToLive = 10000L;
+    Boolean delayWhileIdle = true;
+    ccsClient.send(createJsonMessage(toRegId, messageId, payload, collapseKey,
+            timeToLive, delayWhileIdle));
   }
 
   /**
@@ -151,7 +193,7 @@ public class Server{
     // PackageName of the application that sent this message.
     String category = jsonObject.get("category").toString();
 
-    
+
     // Use the packageName as the collapseKey in the echo packet
     String collapseKey = "echo:CollapseKey";
     @SuppressWarnings("unchecked")
@@ -197,6 +239,7 @@ public class Server{
    // String echo = createJsonMessage(from, getRandomMessageId(), payload, collapseKey, null, false);
     //send(echo);
   }
+
 /**
    * Handles an ACK.
    *
@@ -219,50 +262,6 @@ public class Server{
     String messageId = jsonObject.get("message_id").toString();
     String from = jsonObject.get("from").toString();
     logger.log(Level.INFO, "handleNackReceipt() from: " + from + ", messageId: " + messageId);
-  }
-
-  /**
-   * Creates a JSON encoded GCM message.
-   *
-   * @param to RegistrationId of the target device (Required).
-   * @param messageId Unique messageId for which CCS will send an "ack/nack" (Required).
-   * @param payload Message content intended for the application. (Optional).
-   * @param collapseKey GCM collapse_key parameter (Optional).
-   * @param timeToLive GCM time_to_live parameter (Optional).
-   * @param delayWhileIdle GCM delay_while_idle parameter (Optional).
-   * @return JSON encoded GCM message.
-   */
-  public static String createJsonMessage(String to, String messageId, Map<String, String> payload,
-      String collapseKey, Long timeToLive, Boolean delayWhileIdle) {
-    Map<String, Object> message = new HashMap<String, Object>();
-    message.put("to", to);
-    if (collapseKey != null) {
-      message.put("collapse_key", collapseKey);
-    }
-    if (timeToLive != null) {
-      message.put("time_to_live", timeToLive);
-    }
-    if (delayWhileIdle != null && delayWhileIdle) {
-      message.put("delay_while_idle", true);
-    }
-    message.put("message_id", messageId);
-    message.put("data", payload);
-    return JSONValue.toJSONString(message);
-  }
-
-  /**
-   * Creates a JSON encoded ACK message for an upstream message received from an application.
-   *
-   * @param to RegistrationId of the device who sent the upstream message.
-   * @param messageId messageId of the upstream message to be acknowledged to CCS.
-   * @return JSON encoded ack.
-   */
-  public static String createJsonAck(String to, String messageId) {
-    Map<String, Object> message = new HashMap<String, Object>();
-    message.put("message_type", "ack");
-    message.put("to", to);
-    message.put("message_id", messageId);
-    return JSONValue.toJSONString(message);
   }
 
   /**
@@ -325,12 +324,12 @@ public class Server{
         logger.log(Level.INFO, "Received: " + packet.toXML());
         Message incomingMessage = (Message) packet;
         GcmPacketExtension gcmPacket =
-            (GcmPacketExtension) incomingMessage.getExtension(GCM_NAMESPACE);
+                (GcmPacketExtension) incomingMessage.getExtension(GCM_NAMESPACE);
         String json = gcmPacket.getJson();
         try {
           @SuppressWarnings("unchecked")
           Map<String, Object> jsonObject =
-              (Map<String, Object>) JSONValue.parseWithException(json);
+                  (Map<String, Object>) JSONValue.parseWithException(json);
 
           // present for "ack"/"nack", null otherwise
           Object messageType = jsonObject.get("message_type");
@@ -352,7 +351,7 @@ public class Server{
             handleNackReceipt(jsonObject);
           } else {
             logger.log(Level.WARNING, "Unrecognized message type (%s)",
-                messageType.toString());
+                    messageType.toString());
           }
         } catch (ParseException e) {
           logger.log(Level.SEVERE, "Error parsing JSON " + json, e);
@@ -374,65 +373,56 @@ public class Server{
     connection.login(username, password);
   }
 
-  public static void main(String [] args) {
-    final String userName = "1054444576671" + "@gcm.googleapis.com";
-    final String password = "AIzaSyCgNKkvTFW5FzV5XVf5KYNtXls39hGtLiM";
+  /**
+   * XMPP Packet Extension for GCM Cloud Connection Server.
+   */
+  class GcmPacketExtension extends DefaultPacketExtension {
+    String json;
 
-    /*//code to connect to port 8080
-    String repo = System.getenv("OPENSHIFT_REPO_DIR");
-    if(repo == null) {
-        repo = ".";
+    public GcmPacketExtension(String json) {
+      super(GCM_ELEMENT_NAME, GCM_NAMESPACE);
+      this.json = json;
     }
-    String ip = System.getenv("OPENSHIFT_DIY_IP");
-    if(ip == null) {
-        ip = "127.9.96.129";
-    }
-    String ports = System.getenv("OPENSHIFT_DIY_PORT");
-    if(ports == null) {
-        ports = "8080";
-    }
-    int port = Integer.decode(ports);
-    InetAddress isa;
-	try {
-		isa = InetAddress.getByName(ip);
-		httpServer = HttpServer.create(new InetSocketAddress(isa, port), 10);
-	} catch (UnknownHostException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    httpServer.setExecutor(null);
-    httpServer.start();
-    //code over*/
-    
-    Server ccsClient = new Server();
 
-    try {
-      ccsClient.connect(userName, password);
-      db= new DbUpdate();
-    } catch (XMPPException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+    public String getJson() {
+      return json;
+    }
 
-    //Send a sample hello downstream message to a device.
-    String toRegId = "RegistrationIdOfTheTargetDevice";
-    String messageId = ccsClient.getRandomMessageId();
-    Map<String, String> payload = new HashMap<String, String>();
-    payload.put("Hello", "World");
-    payload.put("CCS", "Dummy Message");
-    payload.put("EmbeddedMessageId", messageId);
-    String collapseKey = "sample";
-    Long timeToLive = 10000L;
-    Boolean delayWhileIdle = true;
-    ccsClient.send(createJsonMessage(toRegId, messageId, payload, collapseKey,
-        timeToLive, delayWhileIdle));
+    @Override
+    public String toXML() {
+      return String.format("<%s xmlns=\"%s\">%s</%s>", GCM_ELEMENT_NAME,
+              GCM_NAMESPACE, json, GCM_ELEMENT_NAME);
+    }
+
+    public Packet toPacket() {
+      return new Message() {
+        // Must override toXML() because it includes a <body>
+        @Override
+        public String toXML() {
+
+          StringBuilder buf = new StringBuilder();
+          buf.append("<message");
+          if (getXmlns() != null) {
+            buf.append(" xmlns=\"").append(getXmlns()).append("\"");
+          }
+          if (getLanguage() != null) {
+            buf.append(" xml:lang=\"").append(getLanguage()).append("\"");
+          }
+          if (getPacketID() != null) {
+            buf.append(" id=\"").append(getPacketID()).append("\"");
+          }
+          if (getTo() != null) {
+            buf.append(" to=\"").append(StringUtils.escapeForXML(getTo())).append("\"");
+          }
+          if (getFrom() != null) {
+            buf.append(" from=\"").append(StringUtils.escapeForXML(getFrom())).append("\"");
+          }
+          buf.append(">");
+          buf.append(GcmPacketExtension.this.toXML());
+          buf.append("</message>");
+          return buf.toString();
+        }
+      };
+    }
   }
 }

@@ -1,4 +1,4 @@
-package com.cabshare.connection;
+package connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 
 public class JDBCConnection {
 
-	private static Connection conn;
 	static final String url = "jdbc:mysql://127.9.96.130:3306/csdb";
 	static String user = null;
 	static String password = null;
+	private static Connection conn;
 	Logger logger = Logger.getLogger("SmackCcsClient");
 
 	public static Connection getConnection() {
@@ -22,7 +22,7 @@ public class JDBCConnection {
 			password = "rzA3E3AtpM29";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = (Connection) DriverManager.getConnection(url, user, password);
+			conn = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (SQLException e) {
