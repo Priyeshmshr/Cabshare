@@ -26,7 +26,7 @@ public class DAOUserDetailsImpl implements DAOUserDetailsInterface {
 		// Code for uploading the registration id into the database
 		try {
 			psmnt = conn.prepareStatement("update csdb.sess set regid = ? where uid=?");
-			psmnt.setString(1, regid);
+			psmnt.setString(1, renegid);
 			psmnt.setString(2, userId);
 
 			int s = psmnt.executeUpdate();

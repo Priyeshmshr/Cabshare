@@ -6,13 +6,16 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class JDBCConnection {
-
+	//TODO
+	// lets from read from file , its easier to when we have to change the properties
 	static final String url = "jdbc:mysql://127.9.96.130:3306/csdb";
 	static String user = null;
 	static String password = null;
 	private static Connection conn;
 	Logger logger = Logger.getLogger("SmackCcsClient");
 
+
+	// Pretty nice code just saying  remove these when you commit :-p
 	public static Connection getConnection() {
 		user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
 		if (user == null)
