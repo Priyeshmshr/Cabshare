@@ -9,10 +9,13 @@
 
 .classpath
 .project
+.settings/*
 
 # build files
 
 */target/*
+
+
 
 
 
