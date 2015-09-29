@@ -10,3 +10,10 @@
 .classpath
 .project
 
+# build files
+
+*/target/*
+
+
+
+
