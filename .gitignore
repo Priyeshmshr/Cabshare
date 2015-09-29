@@ -1,4 +1,12 @@
+
+#intellij
+
 *.iml
 .idea/*
 .settings
+
+#eclipse
+
+.classpath
+.project
 
