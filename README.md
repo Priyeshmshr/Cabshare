@@ -1,4 +1,4 @@
-Version 2.0 of <em> Cabshare </em>
+Version 2.0 of <em> CabShare </em>
 
 <ul>Dependencies </ul>
  
