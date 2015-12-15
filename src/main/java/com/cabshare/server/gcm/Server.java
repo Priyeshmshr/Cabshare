@@ -31,7 +31,10 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.xmlpull.v1.XmlPullParser;
 
-import com.cabshare.server.dao.UserDetailsImpl;
+import com.cabshare.server.dao.UserAuthDAO;
+import com.cabshare.server.dao.UserAuthDAOInterface;
+import com.cabshare.server.dao.UserDetailsDAO;
+import com.cabshare.server.dao.UserDetailsDAOInterface;
 import com.cabshare.server.entities.User;
 import com.cabshare.server.properties.Properties;
 /**
@@ -91,7 +94,9 @@ public class Server{
   public void handleIncomingDataMessage(Map<String, Object> jsonObject) {
     
 	User user = new User();
-	UserDetailsImpl daoUser = new UserDetailsImpl();
+	UserDetailsDAOInterface daoUser = new UserDetailsDAO();
+	UserAuthDAOInterface userAuth = new UserAuthDAO();
+	
 	String from = jsonObject.get("from").toString();
     // PackageName of the application that sent this message.
     String category = jsonObject.get("category").toString();
@@ -99,6 +104,10 @@ public class Server{
     String collapseKey = "echo:CollapseKey";
     @SuppressWarnings("unchecked")
 	final Map<String, String> payload = (Map<String, String>) jsonObject.get("data");
+    
+    /*
+     * Stores registration ID of the user. Registration id is an unique id of the device.
+     */
     if(payload.get("my_action").equals("Update Registration ID")){
     	try {
     		user.setRegID(payload.get("regID"));
@@ -109,6 +118,9 @@ public class Server{
 			e.printStackTrace();
 		}
     }
+    /*
+     * Updates current location of the user and sends the list of other users requesting/sharing cab in 5km Radius.
+     */
     else if(payload.get("my_action").equals("Update Location")){
 		try {
 			user.setRegID(from);
@@ -130,6 +142,9 @@ public class Server{
 			logger.log(Level.WARNING, ":: "+e.getMessage());
 		}
     }
+    /*
+     * Sends the request to the other user to share the cab.
+     */
     else if(payload.get("my_action").equals("sendRequest")){
     	String to = payload.get("ToRegId");
     	String info = payload.get("UserInfo");
@@ -138,6 +153,22 @@ public class Server{
     	req.put("Response_type","request");
     	String toSend = createJsonMessage(to,getRandomMessageId(),req,collapseKey,null,false);
     	send(toSend);
+    }
+    /*
+     * Logs in an user.
+     */
+    else if(payload.get("my_action").equals("login")){
+    	String result=userAuth.login(payload.get("username"), payload.get("pwd"));
+    	Map<String,String> info= new HashMap<String,String>();
+    	info.put("result", result);
+    	String toSend = createJsonMessage(from,getRandomMessageId(),info,collapseKey,null,false);
+    	send(toSend);
+    }
+    /*
+     * Registers an user.
+     */
+    else if(payload.get("my_action").equals("registration")){
+    	
     }
     logger.log(Level.INFO, "hello");
     payload.put("ECHO", "Application: " + category);
