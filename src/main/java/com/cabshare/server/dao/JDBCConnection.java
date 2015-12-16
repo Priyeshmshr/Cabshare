@@ -9,10 +9,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.cabshare.server.properties.Properties;
+
 public class JDBCConnection {
 
 	private static Connection conn;
-	static final String url = "jdbc:mysql://127.9.96.130:3306/csdb";
 	static String user = null;
 	static String password = null;
 	Logger logger = Logger.getLogger("SmackCcsClient");
@@ -20,13 +21,13 @@ public class JDBCConnection {
 	public static Connection getConnection() {
 		user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
 		if (user == null)
-			user = "adminx7Ikp6v";
+			user = "admincS4cVWT";
 		password = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
 		if (password == null)
-			password = "rzA3E3AtpM29";
+			password = "dyuwJbupZX8N";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = (Connection) DriverManager.getConnection(url, user, password);
+			conn = (Connection) DriverManager.getConnection(Properties.url, user, password);
 		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (SQLException e) {

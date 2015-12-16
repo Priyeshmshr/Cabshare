@@ -38,9 +38,7 @@ import com.cabshare.server.dao.UserDetailsDAOInterface;
 import com.cabshare.server.entities.User;
 import com.cabshare.server.properties.Properties;
 /**
- * Sample Smack implementation of a client for GCM Cloud Connection Server.
- *
- * <p>For illustration purposes only.
+ * Smack implementation of a client for GCM Cloud Connection Server.
  */
 public class Server{
 

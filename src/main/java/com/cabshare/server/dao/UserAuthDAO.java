@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.cabshare.server.entities.User;
+import com.cabshare.server.properties.Properties;
 
 public class UserAuthDAO implements UserAuthDAOInterface {
 
@@ -30,7 +32,7 @@ public class UserAuthDAO implements UserAuthDAOInterface {
 		// TODO Auto-generated method stub
 		String passwd=null;
 		try {
-			psmnt = conn.prepareStatement("select pwd from cabshare.csusers where uid=?");
+			psmnt = conn.prepareStatement("select pwd from "+Properties.DB_NAME+".csusers where uid=?");
 			psmnt.setString(1, username);
 			ResultSet rs = psmnt.executeQuery();
 			while (rs.next()) {

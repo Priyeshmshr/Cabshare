@@ -16,6 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.cabshare.server.entities.User;
+import com.cabshare.server.properties.Properties;
 
 
 public class UserDetailsDAO implements UserDetailsDAOInterface {
@@ -30,7 +31,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 		// TODO Auto-generated method stud
 		// Code for uploading the registration id into the database
 		try {
-			psmnt = conn.prepareStatement("update csdb.sess set regid = ? where uid=?");
+			psmnt = conn.prepareStatement("update "+Properties.DB_NAME+".sess set regid = ? where uid=?");
 			psmnt.setString(1, user.getRegID());
 			psmnt.setString(2, user.getId());
 
@@ -54,7 +55,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 		Map<String,String> tosend= new HashMap<String,String>();
 		   int s=0;
 		   try {
-			psmnt = conn.prepareStatement("select uid from csdb.sess where regid = ?");
+			psmnt = conn.prepareStatement("select uid from "+Properties.DB_NAME+".sess where regid = ?");
 			psmnt.setString(1, user.getRegID());
 			ResultSet rs = psmnt.executeQuery();
 			String uid=null;
@@ -62,7 +63,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 				uid = rs.getString("uid");
 			}
 			if(!uid.isEmpty()){
-			psmnt = conn.prepareStatement("insert into csdb.coords(user_id, type ,startLat, startLon ,destLat,destLon) values(?,?,?,?,?,?) ");
+			psmnt = conn.prepareStatement("insert into "+Properties.DB_NAME+".coords(user_id, type ,startLat, startLon ,destLat,destLon) values(?,?,?,?,?,?) ");
 			psmnt.setString(1, user.getId());
 			psmnt.setString(2, user.getRequestType());
 			psmnt.setDouble(3, Double.valueOf(user.getStartLat()));
@@ -107,7 +108,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 			   SLonLen = temp/60; // minutes in decimal
 			   temp = 6/DLonLen;
 			   DLonLen = temp/60;//minutes in decimal
-			   psmnt = conn.prepareStatement("select s.uid, s.regid, c.startLat, c.startLon, c.destLat, c.destLon from csdb.coords c , csdb.sess s where c.type = ? and c.startLat <= ?+0.05 and " +
+			   psmnt = conn.prepareStatement("select s.uid, s.regid, c.startLat, c.startLon, c.destLat, c.destLon from "+Properties.DB_NAME+".coords c , "+Properties.DB_NAME+".sess s where c.type = ? and c.startLat <= ?+0.05 and " +
 			   		"c.startLon <= ?+? and c.destLat <= ? + 0.05 and c.destLon <= ? + ? and c.startLat >= ?-0.05 and " +
 			   		"c.startLon >= ?-? and c.destLat >= ?- 0.05 and c.destLon >= ? - ? and s.uid = c.user_id"); //Query to get suggestions within 5-6 kilometres of range.
 			   if(user.getRequestType()!=null && user.getRequestType().equals("requester"))
