@@ -36,7 +36,7 @@ public class UserAuthDAO implements UserAuthDAOInterface {
 			psmnt.setString(1, username);
 			ResultSet rs = psmnt.executeQuery();
 			while (rs.next()) {
-				passwd = rs.getString("uid");
+				passwd = rs.getString("pwd");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

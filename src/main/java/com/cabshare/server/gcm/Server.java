@@ -256,7 +256,7 @@ public class Server{
     config.setSocketFactory(SSLSocketFactory.getDefault());
 
     // NOTE: Set to true to launch a window with information about packets sent and received
-    config.setDebuggerEnabled(false);
+    config.setDebuggerEnabled(true);
 
     // -Dsmack.debugEnabled=true
     XMPPConnection.DEBUG_ENABLED = false;

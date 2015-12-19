@@ -32,13 +32,13 @@ public class Initializer {
 	        repo = ".";
 	    }*/
 	    String ip = System.getenv("OPENSHIFT_DIY_IP");
-	    /*if(ip == null) {
+	    if(ip == null) {
 	        ip = "127.9.96.129";
-	    }*/
+	    }
 	    String ports = System.getenv("OPENSHIFT_DIY_PORT");
-	    /*if(ports == null) {
+	    if(ports == null) {
 	        ports = "8080";
-	    }*/
+	    }
 	    int port = Integer.decode(ports);
 	    InetAddress isa;
 		try {
