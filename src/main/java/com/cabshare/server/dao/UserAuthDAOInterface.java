@@ -5,9 +5,13 @@ package com.cabshare.server.dao;
 
 import com.cabshare.server.entities.User;
 
+
+/**
+ * @deepak :- not really the place for these functions (login , regsitration) in a DAO
+ */
 public interface UserAuthDAOInterface {
 
-	public String login(String username, String pwd);
+    String login(String username, String pwd);
 
-	public String registration(User user);
+    String registration(User user);
 }

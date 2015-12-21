@@ -3,6 +3,11 @@
  */
 package com.cabshare.server.dao;
 
+import com.cabshare.server.entities.User;
+import com.cabshare.server.properties.Properties;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,17 +17,16 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import com.cabshare.server.entities.User;
-import com.cabshare.server.properties.Properties;
-
 
 public class UserDetailsDAO implements UserDetailsDAOInterface {
 
 	public Connection conn;
 	PreparedStatement psmnt= null;
+
+    /**
+     * @deepak :- this string should be a constant , say String logName=SmackCcsClient;
+     */
+
 	Logger logger = Logger.getLogger("SmackCcsClient");
 	public UserDetailsDAO (){
 		conn = JDBCConnection.getConnection();
