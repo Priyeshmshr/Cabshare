@@ -1,7 +1,7 @@
 Version 2.0 of Cabshare <br/>
 <br/>
 <b>Dependencies:</b><br/>
-MySQL 5.5<br/>
+MySQL 5.5/6.0<br/>
 Maven 3.3.3<br/>
 Jdk 8<br/>
 
