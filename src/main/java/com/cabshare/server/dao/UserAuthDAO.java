@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import com.cabshare.server.entities.User;
 import com.cabshare.server.properties.Properties;
-
+// Eclipse testing
 public class UserAuthDAO implements UserAuthDAOInterface {
 
 	public Connection conn;
