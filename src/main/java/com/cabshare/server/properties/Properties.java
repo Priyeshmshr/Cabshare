@@ -4,6 +4,10 @@
 
 package com.cabshare.server.properties;
 
+/**
+ * better to make a config.properties file , does openshift allow this ? storing a text file on it ?
+ */
+
 public class Properties {
 
 	  public static final String userName = "1054444576671" + "@gcm.googleapis.com";

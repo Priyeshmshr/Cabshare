@@ -4,19 +4,20 @@
 
 package com.cabshare.server.dao;
 
+import com.cabshare.server.properties.Properties;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import com.cabshare.server.properties.Properties;
-
 public class JDBCConnection {
 
-	private static Connection conn;
 	static String user = null;
 	static String password = null;
-	Logger logger = Logger.getLogger("SmackCcsClient");
+    private static Connection conn;
+    // All these could constant Strings , or even better read from a file
+    Logger logger = Logger.getLogger("SmackCcsClient");
 
 	public static Connection getConnection() {
 		user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
@@ -27,9 +28,9 @@ public class JDBCConnection {
 			password = "dyuwJbupZX8N";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = (Connection) DriverManager.getConnection(Properties.url, user, password);
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
+            conn = DriverManager.getConnection(Properties.url, user, password);
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

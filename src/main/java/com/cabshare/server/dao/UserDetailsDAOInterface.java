@@ -4,14 +4,23 @@
 
 package com.cabshare.server.dao;
 
+import com.cabshare.server.entities.User;
+
 import java.sql.SQLException;
 import java.util.Map;
-import com.cabshare.server.entities.User;
+
+/**
+ * //TODO
+ *
+ * @deepak again have a chat with me about this  ,these are application layer stuff , we'll more layer of abstract doesnt really belong in a dao
+ */
 
 public interface UserDetailsDAOInterface {
 
-	public void Update(User user) throws SQLException;
-	public Map<String,String> Location(User user) throws SQLException;
-	   //@SuppressWarnings("unchecked")
-	public Map<String,String> getSuggestion(User user);
+    void Update(User user) throws SQLException;
+
+    Map<String, String> Location(User user) throws SQLException;
+
+    //@SuppressWarnings("unchecked")
+    Map<String, String> getSuggestion(User user);
 }
