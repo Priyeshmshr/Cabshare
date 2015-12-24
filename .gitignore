@@ -1,6 +1,7 @@
 #eclispe
 .settings
 .classpath
+.project
 
 #intellij
 

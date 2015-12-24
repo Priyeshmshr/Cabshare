@@ -9,6 +9,8 @@
 		<module>dao</module>
 		<module>entities</module>
 		<module>gcm</module>
+		<module>main</module>
+		<module>properties</module>
 	</modules>
 	<packaging>pom</packaging>
 
@@ -24,8 +26,13 @@
 			<id>opencast-public</id>
 			<url>http://repository.opencastproject.org/nexus/content/repositories/public/</url>
 		</repository>
+		<repository>
+		    <id>my-repo</id>
+		    <url>${user.home}\.m2\repository/</url>
+		</repository>
 	</repositories>
 	<dependencies>
+	    <!-- externals -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
