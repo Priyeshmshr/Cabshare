@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
 			String pwd = request.getParameter("password");
 			result=new UserAuthDAO().login(username, pwd);
 		}
-		out.println(result);
+		out.write(result);
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
