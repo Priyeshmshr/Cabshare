@@ -4,6 +4,7 @@
 package com.cabshare.server.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,6 +38,9 @@ public class RegistrationServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		String result = null;
 		if(request !=null){
 		    User user = new User();
 		    user.setUsername(request.getParameter(username));
@@ -44,9 +48,10 @@ public class RegistrationServlet extends HttpServlet {
 		    user.setFullName(request.getParameter(fullName));
 		    user.setGender(request.getParameter(gender));
 		    user.setContact_no(request.getParameter(contact));
-		    UserAuthDAO us = new UserAuthDAO();
-		    us.registration(user);
+		    result = new UserAuthDAO().registration(user);
 		}
+		out.write(result);
+		out.close();
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

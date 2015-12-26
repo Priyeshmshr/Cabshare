@@ -43,6 +43,7 @@ public class LoginServlet extends HttpServlet {
 			result=new UserAuthDAO().login(username, pwd);
 		}
 		out.write(result);
+		out.close();
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
