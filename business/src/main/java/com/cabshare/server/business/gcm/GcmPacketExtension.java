@@ -2,7 +2,7 @@
  *   Created by Priyesh Mishra on 22-OCT-2015.
  */
 
-package com.cabshare.server.gcm;
+package com.cabshare.server.business.gcm;
 
 import org.jivesoftware.smack.packet.DefaultPacketExtension;
 import org.jivesoftware.smack.packet.Message;

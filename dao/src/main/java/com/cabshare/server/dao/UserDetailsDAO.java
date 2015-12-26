@@ -37,7 +37,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 		try {
 			psmnt = conn.prepareStatement("update "+Properties.DB_NAME+".sess set regid = ? where uid=?");
 			psmnt.setString(1, user.getRegID());
-			psmnt.setString(2, user.getId());
+			psmnt.setString(2, user.getUsername());
 
 			int s = psmnt.executeUpdate();
 			if (s > 0) {
@@ -68,7 +68,7 @@ public class UserDetailsDAO implements UserDetailsDAOInterface {
 			}
 			if(!uid.isEmpty()){
 			psmnt = conn.prepareStatement("insert into "+Properties.DB_NAME+".coords(user_id, type ,startLat, startLon ,destLat,destLon) values(?,?,?,?,?,?) ");
-			psmnt.setString(1, user.getId());
+			psmnt.setString(1, user.getUsername());
 			psmnt.setString(2, user.getRequestType());
 			psmnt.setDouble(3, Double.valueOf(user.getStartLat()));
 			psmnt.setDouble(4, Double.valueOf(user.getStartLon()));

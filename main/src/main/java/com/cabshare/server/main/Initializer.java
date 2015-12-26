@@ -6,7 +6,7 @@
 
 package com.cabshare.server.main;
 
-import com.cabshare.server.gcm.Server;
+import com.cabshare.server.business.gcm.Server;
 import com.sun.net.httpserver.HttpServer;
 import org.jivesoftware.smack.XMPPException;
 

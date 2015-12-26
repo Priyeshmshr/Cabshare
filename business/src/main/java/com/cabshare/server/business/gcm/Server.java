@@ -3,7 +3,7 @@
  *   Created by Priyesh Mishra on 22-OCT-2015.
  */
 
-package com.cabshare.server.gcm;
+package com.cabshare.server.business.gcm;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -109,7 +109,7 @@ public class Server{
     if(payload.get("my_action").equals("Update Registration ID")){
     	try {
     		user.setRegID(payload.get("regID"));
-    		user.setId(payload.get("id"));
+    		user.setUsername(payload.get("id"));
 			daoUser.Update(user);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class Server{
     else if(payload.get("my_action").equals("Update Location")){
 		try {
 			user.setRegID(from);
-			user.setId(payload.get("id"));
+			user.setUsername(payload.get("id"));
 			user.setStartLat(payload.get("startLat"));
 			user.setStartLon(payload.get("startLon"));
 			user.setDestLat(payload.get("destLat"));

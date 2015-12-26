@@ -20,12 +20,14 @@ public class JDBCConnection {
     Logger logger = Logger.getLogger("SmackCcsClient");
 
 	public static Connection getConnection() {
-		user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
+		//user = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
 		if (user == null)
-			user = "admincS4cVWT";
-		password = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
+			user = "root";
+			//user = "admincS4cVWT";
+		//password = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
 		if (password == null)
-			password = "dyuwJbupZX8N";
+			password ="";
+			//password = "dyuwJbupZX8N";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(Properties.url, user, password);

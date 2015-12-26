@@ -52,7 +52,13 @@ public class UserAuthDAO implements UserAuthDAOInterface {
 			return "Wrong Password";
 	}
 	public String registration(User user) {
-		return null;
 		// TODO Auto-generated method stub
+		try{
+			//psmnt = conn.prepareStatement(query);
+		}
+		catch(Exception e){
+			
+		}
+		return null;
 	}
 }

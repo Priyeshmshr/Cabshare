@@ -8,7 +8,48 @@ package com.cabshare.server.entities;
 
 public class User {
 
-	String startLat, startLon, destLat, destLon, requestType, id, regID;
+	private String password, username, fullName, gender, contact_no, startLat, startLon, destLat, destLon, requestType,
+			regID;
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String firstName) {
+		this.fullName = firstName;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getContact_no() {
+		return contact_no;
+	}
+
+	public void setContact_no(String contact_no) {
+		this.contact_no = contact_no;
+	}
 
 	public String getStartLat() {
 		return startLat;
@@ -50,14 +91,6 @@ public class User {
 		this.requestType = requestType;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getRegID() {
 		return regID;
 	}
@@ -65,5 +98,5 @@ public class User {
 	public void setRegID(String regID) {
 		this.regID = regID;
 	}
-	
+
 }
