@@ -1,5 +1,6 @@
-/*
- * Created by Priyesh Mishra on 27-Dec-2015
+/**
+ * @author Priyesh Mishra
+ * Created on 27-Dec-2015
  */
 package com.cabshare.server.dao;
 
@@ -10,6 +11,13 @@ import java.util.logging.Logger;
 
 import com.cabshare.server.properties.Properties;
 
+/**
+ * 
+ *  Singleton class(not yet sure if we need this to be a singleton class :P ).
+ *  Returns the Jdbc connection object to the DAO objects.
+ *  Returns the DAO object to the client to perform CRUD operations.
+ *  
+ */
 public class JdbcDaoFactory extends DaoFactory {
 
 	static String user = null;
@@ -17,7 +25,14 @@ public class JdbcDaoFactory extends DaoFactory {
 	private static Connection conn;
 	// All these could constant Strings , or even better read from a file
 	Logger logger = Logger.getLogger("SmackCcsClient");
-
+    private static JdbcDaoFactory jdbc_instance=new JdbcDaoFactory();
+    
+    public static JdbcDaoFactory getInstance(){
+    	return jdbc_instance;
+    }
+    private JdbcDaoFactory(){ }
+    
+    @Override
 	public Connection getConnection() {
 		// TODO Auto-generated method stub
 		if (user == null)
