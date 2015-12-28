@@ -18,7 +18,7 @@ public abstract class DaoFactory {
 	public static DaoFactory getDataStore(String dataStoreName){
 		switch(dataStoreName){
 		case "MySql":
-			return JdbcDaoFactory.getInstance();
+			return MySqlDaoFactory.getInstance();
 		case "":
 			return null;
 		}

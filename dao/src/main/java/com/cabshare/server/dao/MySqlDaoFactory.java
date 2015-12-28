@@ -18,19 +18,19 @@ import com.cabshare.server.properties.Properties;
  *  Returns the DAO object to the client to perform CRUD operations.
  *  
  */
-public class JdbcDaoFactory extends DaoFactory {
+public class MySqlDaoFactory extends DaoFactory {
 
 	static String user = null;
 	static String password = null;
 	private static Connection conn;
 	// All these could constant Strings , or even better read from a file
 	Logger logger = Logger.getLogger("SmackCcsClient");
-    private static JdbcDaoFactory jdbc_instance=new JdbcDaoFactory();
+    private static MySqlDaoFactory jdbc_instance=new MySqlDaoFactory();
     
-    public static JdbcDaoFactory getInstance(){
+    public static MySqlDaoFactory getInstance(){
     	return jdbc_instance;
     }
-    private JdbcDaoFactory(){ }
+    private MySqlDaoFactory(){ }
     
     @Override
 	public Connection getConnection() {
