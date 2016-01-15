@@ -2,7 +2,7 @@
  *   Created by Priyesh Mishra on 22-OCT-2015.
  */
 
-package com.cabshare.server.dao;
+package com.cabshare.server.dao.dao;
 
 import com.cabshare.server.properties.Properties;
 

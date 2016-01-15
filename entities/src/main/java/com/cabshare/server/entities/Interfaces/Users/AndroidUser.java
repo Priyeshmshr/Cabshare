@@ -1,6 +1,4 @@
-package com.cabshare.server.entities.Users;
-
-import com.cabshare.server.entities.Users.Person;
+package com.cabshare.server.entities.Interfaces.Users;
 
 /**
  * Created by deepak on 30/12/15.

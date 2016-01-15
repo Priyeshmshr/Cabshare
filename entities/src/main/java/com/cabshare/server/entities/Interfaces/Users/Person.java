@@ -1,4 +1,4 @@
-package com.cabshare.server.entities.Users;
+package com.cabshare.server.entities.Interfaces.Users;
 
 /**
  * Created by deepak on 30/12/15.

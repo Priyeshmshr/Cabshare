@@ -1,7 +1,7 @@
 /*
  * Created by Priyesh Mishra on 15-Dec-2015
  */
-package com.cabshare.server.dao;
+package com.cabshare.server.dao.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +14,7 @@ import com.cabshare.server.entities.User;
 import com.cabshare.server.properties.Properties;
 
 // Eclipse testing
-public class UserAuthDAO implements UserAuthDAOInterface {
+public class UserAuthDAO   {
 
 	public Connection conn;
 	PreparedStatement psmnt = null;
