@@ -2,7 +2,7 @@
  * @author Priyesh Mishra
  * Created on 27-Dec-2015
  */
-package com.cabshare.server.dao;
+package com.cabshare.server.dao.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,21 +18,23 @@ import com.cabshare.server.properties.Properties;
  *  Returns the DAO object to the client to perform CRUD operations.
  *  
  */
-public class JdbcDaoFactory extends DaoFactory {
+public class MySqlDaoFactory {
 
 	static String user = null;
 	static String password = null;
 	private static Connection conn;
 	// All these could constant Strings , or even better read from a file
 	Logger logger = Logger.getLogger("SmackCcsClient");
-    private static JdbcDaoFactory jdbc_instance=new JdbcDaoFactory();
-    
-    public static JdbcDaoFactory getInstance(){
-    	return jdbc_instance;
-    }
-    private JdbcDaoFactory(){ }
-    
-    @Override
+	private static MySqlDaoFactory jdbc_instance = new MySqlDaoFactory();
+
+	public static MySqlDaoFactory getInstance() {
+		return jdbc_instance;
+	}
+
+	private MySqlDaoFactory() {
+	}
+
+
 	public Connection getConnection() {
 		// TODO Auto-generated method stub
 		if (user == null)
@@ -53,18 +55,7 @@ public class JdbcDaoFactory extends DaoFactory {
 		}
 		return conn;
 	}
-
-	@Override
-	public Dao createDAO(String dataTableName) {
-		// TODO Auto-generated method stub
-		switch(dataTableName){
-		case "User":
-			return new UserDao();
-		case "Location":
-			return new LocationDao();
-		case "GCMRegistraion":
-			return new GCMRegistrationDao();
-		}
-		return null;
-	}
 }
+
+
+

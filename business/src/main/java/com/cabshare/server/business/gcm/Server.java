@@ -31,10 +31,7 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.xmlpull.v1.XmlPullParser;
 
-import com.cabshare.server.dao.UserAuthDAO;
-import com.cabshare.server.dao.UserAuthDAOInterface;
-import com.cabshare.server.dao.UserDetailsDAO;
-import com.cabshare.server.dao.UserDetailsDAOInterface;
+import com.cabshare.server.dao.dao.UserAuthDAO;
 import com.cabshare.server.entities.User;
 import com.cabshare.server.properties.Properties;
 /**
